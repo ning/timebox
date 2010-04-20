@@ -119,8 +119,8 @@ public class TimeBox
 
             for (Annotation annotation : method.getAnnotations()) {
                 for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                    if (iface.isAnnotationPresent(Guard.class)) {
-                        Guard sp = iface.getAnnotation(Guard.class);
+                    if (iface.isAnnotationPresent(GuardAnnotation.class)) {
+                        GuardAnnotation sp = iface.getAnnotation(GuardAnnotation.class);
                         final GuardHouse p;
                         try {
                             p = factory.instantiate(sp.value());
@@ -128,7 +128,7 @@ public class TimeBox
                         catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
-                        methodTests.add(p.buildMethodPredicate(annotation, method));
+                        methodTests.add(p.buildMethodPredicate(annotation, target, method));
                     }
                 }
             }
@@ -149,8 +149,8 @@ public class TimeBox
 
 
                     for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                        if (iface.isAnnotationPresent(Guard.class)) {
-                            Guard sp = iface.getAnnotation(Guard.class);
+                        if (iface.isAnnotationPresent(GuardAnnotation.class)) {
+                            GuardAnnotation sp = iface.getAnnotation(GuardAnnotation.class);
                             final GuardHouse p;
                             try {
                                 p = factory.instantiate(sp.value());
@@ -158,7 +158,7 @@ public class TimeBox
                             catch (Exception e) {
                                 throw new IllegalStateException(e);
                             }
-                            parameterTests.get(i).add(p.buildArgumentPredicate(annotation, method, i));
+                            parameterTests.get(i).add(p.buildArgumentPredicate(annotation, target, method, i));
                         }
                     }
                 }

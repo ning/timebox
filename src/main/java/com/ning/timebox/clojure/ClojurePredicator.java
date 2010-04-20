@@ -25,7 +25,7 @@ public class ClojurePredicator implements GuardHouse
         }
     }
 
-    public Predicate<Object[]> buildMethodPredicate(Annotation a, Method method)
+    public Predicate<Object[]> buildMethodPredicate(Annotation a, Object target, Method method)
     {
 
         final IFn fn;
@@ -61,7 +61,7 @@ public class ClojurePredicator implements GuardHouse
         }
     }
 
-    public Predicate<Object> buildArgumentPredicate(Annotation annotation, Method m, int argumentIndex)
+    public Predicate<Object> buildArgumentPredicate(Annotation annotation, Object target, Method m, int argumentIndex)
     {
         try {
             final IFn fn = (IFn) load(new StringReader(((CLJ) annotation).value()));

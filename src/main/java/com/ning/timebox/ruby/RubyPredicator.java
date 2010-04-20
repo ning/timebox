@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 
 public class RubyPredicator implements GuardHouse
 {
-    public Predicate<Object[]> buildMethodPredicate(Annotation a, Method m)
+    public Predicate<Object[]> buildMethodPredicate(Annotation a, Object target, Method m)
     {
         Rb rb = (Rb) a;
         String block = rb.value().trim();
@@ -36,7 +36,7 @@ public class RubyPredicator implements GuardHouse
         };
     }
 
-    public Predicate<Object> buildArgumentPredicate(Annotation a, Method m, int argumentIndex)
+    public Predicate<Object> buildArgumentPredicate(Annotation a, Object target, Method m, int argumentIndex)
     {
         Rb rb = (Rb) a;
         String block = rb.value().trim();

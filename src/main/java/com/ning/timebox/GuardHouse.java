@@ -5,6 +5,6 @@ import java.lang.reflect.Method;
 
 public interface GuardHouse
 {
-    Predicate<Object[]> buildMethodPredicate(Annotation a, Method m);
-    Predicate<Object> buildArgumentPredicate(Annotation a, Method m, int argumentIndex);
+    Predicate<Object[]> buildMethodPredicate(Annotation a, Object handler, Method m);
+    Predicate<Object> buildArgumentPredicate(Annotation a, Object handler, Method m, int argumentIndex);
 }
