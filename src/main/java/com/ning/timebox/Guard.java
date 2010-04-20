@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SandPredicate
+public @interface Guard
 {
-    Class<? extends Predicator> value();
+    Class<? extends GuardHouse> value();
 }

@@ -1,12 +1,12 @@
 package com.ning.timebox.clojure;
 
-import com.ning.timebox.SandPredicate;
+import com.ning.timebox.Guard;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@SandPredicate(ClojurePredicator.class)
+@Guard(ClojurePredicator.class)
 public @interface CLJ
 {
     String value();

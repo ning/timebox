@@ -119,9 +119,9 @@ public class TimeBox
 
             for (Annotation annotation : method.getAnnotations()) {
                 for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                    if (iface.isAnnotationPresent(SandPredicate.class)) {
-                        SandPredicate sp = iface.getAnnotation(SandPredicate.class);
-                        final Predicator p;
+                    if (iface.isAnnotationPresent(Guard.class)) {
+                        Guard sp = iface.getAnnotation(Guard.class);
+                        final GuardHouse p;
                         try {
                             p = factory.instantiate(sp.value());
                         }
@@ -149,9 +149,9 @@ public class TimeBox
 
 
                     for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                        if (iface.isAnnotationPresent(SandPredicate.class)) {
-                            SandPredicate sp = iface.getAnnotation(SandPredicate.class);
-                            final Predicator p;
+                        if (iface.isAnnotationPresent(Guard.class)) {
+                            Guard sp = iface.getAnnotation(Guard.class);
+                            final GuardHouse p;
                             try {
                                 p = factory.instantiate(sp.value());
                             }

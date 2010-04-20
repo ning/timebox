@@ -2,8 +2,8 @@ package com.ning.timebox.clojure;
 
 import clojure.lang.ArraySeq;
 import clojure.lang.IFn;
+import com.ning.timebox.GuardHouse;
 import com.ning.timebox.Predicate;
-import com.ning.timebox.Predicator;
 
 import java.io.StringReader;
 import java.lang.annotation.Annotation;
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 
 import static clojure.lang.Compiler.load;
 
-public class ClojurePredicator implements Predicator
+public class ClojurePredicator implements GuardHouse
 {
 
     private static final IFn FALSY_APPLYSY;

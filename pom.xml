@@ -5,7 +5,7 @@
     <artifactId>timebox</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sand</name>
+    <name>timebox</name>
     <url>http://maven.apache.org</url>
     <dependencies>
 

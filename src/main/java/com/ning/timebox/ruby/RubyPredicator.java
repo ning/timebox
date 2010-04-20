@@ -6,12 +6,12 @@ import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import com.ning.timebox.Predicate;
-import com.ning.timebox.Predicator;
+import com.ning.timebox.GuardHouse;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class RubyPredicator implements Predicator
+public class RubyPredicator implements GuardHouse
 {
     public Predicate<Object[]> buildMethodPredicate(Annotation a, Method m)
     {
