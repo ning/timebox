@@ -24,7 +24,6 @@ public class GuardMethodGuardHouse implements GuardHouse
         }
         return new Predicate<Object[]>()
         {
-
             public boolean test(Object[] arg)
             {
                 try {
