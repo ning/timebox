@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestGather extends TestCase
 {
-    public void testFoo() throws Exception
+    public void testUnguardedGather() throws Exception
     {
         final AtomicInteger flag = new AtomicInteger(0);
         final TimeBox box = new TimeBox(new Object()
@@ -38,40 +38,6 @@ public class TestGather extends TestCase
 
         assertTrue(box.react(100, TimeUnit.MILLISECONDS));
         assertEquals(2, flag.get());
-    }
-
-    public void testBar() throws Exception
-    {
-        final AtomicInteger flag = new AtomicInteger(0);
-        final TimeBox box = new TimeBox(new Object()
-        {
-            @Priority(3)
-            public void collectPuppies(@Gather @Rb("|d| d.age < 2") Collection<Dog> dogs)
-            {
-                flag.set(dogs.size());
-            }
-
-            public Boolean isBouncer(Dog dog)
-            {
-                return "Bouncer".equals(dog.getName());
-            }
-
-        });
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                box.provide(new Dog("Bean", 14));
-                box.provide(new Dog("Mac", 1));
-                latch.countDown();
-            }
-        }).start();
-        latch.await();
-
-        assertTrue(box.react(100, TimeUnit.MILLISECONDS));
-        assertEquals(1, flag.get());
     }
 
     public void testGuardWithRuby() throws Exception
