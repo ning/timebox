@@ -1,13 +1,9 @@
 package com.ning.timebox;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -28,11 +24,9 @@ public class TimeBox
 
     private final Semaphore flag = new Semaphore(0);
     private final int highestPriority;
-    private final Factory factory;
 
     public TimeBox(Factory factory, Object handler)
     {
-        this.factory = factory;
         int hp = Integer.MIN_VALUE;
         final Method[] methods = handler.getClass().getDeclaredMethods();
         for (Method method : methods) {
@@ -41,7 +35,7 @@ public class TimeBox
                 if (priority > hp) {
                     hp = priority;
                 }
-                Handler h = new Handler(handler, method);
+                Handler h = new Handler(factory, handler, method);
                 if (handlers.containsKey(priority)) {
                     throw new IllegalArgumentException(format("multiple reactor methods have priority %d", priority));
                 }
@@ -95,117 +89,5 @@ public class TimeBox
         }
 
         return false;
-    }
-
-    private class Handler
-    {
-        private final Object[] values;
-        private final long[] authorities;
-        private final Object target;
-        private final Method method;
-        private final Class[] types;
-        private final List<Predicate<Object[]>> methodTests = new ArrayList<Predicate<Object[]>>();
-        private final List<Collection<Predicate>> parameterTests;
-
-        public Handler(Object target, Method method)
-        {
-            this.types = method.getParameterTypes();
-            this.target = target;
-            this.method = method;
-            this.values = new Object[types.length];
-            this.authorities = new long[types.length];
-            this.parameterTests = new ArrayList<Collection<Predicate>>(method.getParameterTypes().length);
-
-
-            for (Annotation annotation : method.getAnnotations()) {
-                for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                    if (iface.isAnnotationPresent(GuardAnnotation.class)) {
-                        GuardAnnotation sp = iface.getAnnotation(GuardAnnotation.class);
-                        final GuardHouse p;
-                        try {
-                            p = factory.instantiate(sp.value());
-                        }
-                        catch (Exception e) {
-                            throw new IllegalStateException(e);
-                        }
-                        methodTests.add(p.buildMethodPredicate(annotation, target, method));
-                    }
-                }
-            }
-
-            for (int i = 0; i < method.getParameterTypes().length; i++) {
-                parameterTests.add(new ArrayList<Predicate>());
-            }
-
-            // now prefill authorities to required authority - 1,
-            // so that when needed authoity comes in, it is at higher
-            Annotation[][] param_annos = method.getParameterAnnotations();
-            for (int i = 0; i < param_annos.length; i++) {
-                authorities[i] = Long.MIN_VALUE;
-                for (Annotation annotation : param_annos[i]) {
-                    if (annotation instanceof Authority) {
-                        authorities[i] = ((Authority) annotation).value();
-                    }
-
-
-                    for (Class<?> iface : annotation.getClass().getInterfaces()) {
-                        if (iface.isAnnotationPresent(GuardAnnotation.class)) {
-                            GuardAnnotation sp = iface.getAnnotation(GuardAnnotation.class);
-                            final GuardHouse p;
-                            try {
-                                p = factory.instantiate(sp.value());
-                            }
-                            catch (Exception e) {
-                                throw new IllegalStateException(e);
-                            }
-                            parameterTests.get(i).add(p.buildArgumentPredicate(annotation, target, method, i));
-                        }
-                    }
-                }
-            }
-        }
-
-        public void provide(Class type, Object value, long authority)
-        {
-            for (int i = 0; i < types.length; i++) {
-                if (types[i].isAssignableFrom(type)
-                    && authorities[i] <= authority
-                    && testParameterPredicates(value, parameterTests.get(i))) {
-                    values[i] = value;
-                    authorities[i] = authority;
-                    return;
-                }
-            }
-        }
-
-        private boolean testParameterPredicates(Object value, Collection<Predicate> predicates)
-        {
-            for (Predicate predicate : predicates) {
-                if (!predicate.test(value)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public boolean isSatisfied()
-        {
-            for (Object value : values) {
-                if (value == null) {
-                    return false;
-                }
-            }
-            for (Predicate<Object[]> test : methodTests) {
-                if (!test.test(values)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public void handle() throws InvocationTargetException, IllegalAccessException
-        {
-            method.invoke(target, values);
-        }
     }
 }

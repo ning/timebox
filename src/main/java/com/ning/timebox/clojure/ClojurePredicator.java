@@ -73,7 +73,7 @@ public class ClojurePredicator implements GuardHouse
                         return (Boolean) FALSY.invoke(fn, arg);
                     }
                     catch (Exception e) {
-                        throw new UnsupportedOperationException("Not Yet Implemented!");
+                        throw new IllegalArgumentException(e);
                     }
                 }
             };
@@ -81,5 +81,14 @@ public class ClojurePredicator implements GuardHouse
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Predicate<Object> buildGatherPredicate(Annotation a,
+                                                  Object handler,
+                                                  Method m,
+                                                  Class expectedType,
+                                                  int argumentIndex)
+    {
+        return buildArgumentPredicate(a, handler, m, argumentIndex);
     }
 }

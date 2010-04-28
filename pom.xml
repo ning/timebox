@@ -7,6 +7,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>timebox</name>
     <url>http://maven.apache.org</url>
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <dependencies>
 
         <dependency>

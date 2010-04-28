@@ -58,4 +58,13 @@ public class RubyPredicator implements GuardHouse
             }
         };
     }
+
+    public Predicate<Object> buildGatherPredicate(Annotation a,
+                                                  Object handler,
+                                                  Method m,
+                                                  Class expectedType, 
+                                                  int argumentIndex)
+    {
+        return buildArgumentPredicate(a, handler, m, argumentIndex);
+    }
 }
