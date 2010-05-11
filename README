@@ -1,3 +1,65 @@
+TimeBox is a micro-framework to limit a computation to a well-defined period
+of time while also declaring the form of acceptable results of the computation.
+
+First you declare the rules for what kind of results you would like. In this 
+example we ideally want the computation to produce both a Dog and a Cat, but 
+it's ok to get just a Dog:
+
+  final TimeBox box = new TimeBox(new Object() {
+    @Priority(3)
+    public void best(Dog dog, Cat cat) {
+      // do something with the dog and cat
+    }
+
+    @Priority(2)
+    public void okay(Dog dog) {
+      // do something with the dog
+    }
+  });
+  
+The @Priority annotation declares the priority levels for matching results, 
+higher numbers matching first. Also note that the method names don't matter 
+in your matcher object, only that the TimeBox annotations are present.
+
+Your computation happens in some other thread(s), and when it produces a value
+it stores it in the TimeBox via the provide() method:
+
+  // In some other thread:
+  box.provide(new Dog());
+  
+Finally in the thread where you want to limit the computation time you block 
+via the react() method:
+
+  // Block until the time limit or the constraints are satisfied:
+  boolean gotResultInTime = box.react(100, TimeUnit.MILLISECONDS);
+  
+A TimeBox can also *gather* multiple results into a collection via the @Gather
+annotation, so if there are multiple provide() calls then you get all the
+results:
+
+  final TimeBox box = new TimeBox(new Object() {
+    @Priority(3)
+    public void gimme(@Gather Collection<Dog> dogs) {
+      // do something with the gathered dogs
+    }
+  }); 
+  
+TimeBox can even apply predicates written in Ruby or Clojure to filter results:
+
+  final TimeBox box = new TimeBox(new Object() {
+    @Priority(3)
+    public void collectPuppies(@Gather @Rb("|d| d.age < 2") Collection<Dog> dogs) {
+      // yay puppies
+    }
+  }); 
+
+  final TimeBox box = new TimeBox(new Object() {
+    @Priority(3)
+    public void collectPuppies(@Gather @CLJ("#(< (.getAge %) 2)") Collection<Dog> dogs) {
+      // yay puppies
+    }
+  });
+
 * TODO Items
 ** [ ] Convert Authority to a Guard
 ** [ ] @Collect(atLeast=7) on gathers
