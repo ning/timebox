@@ -178,4 +178,22 @@ public class TestTimeBox extends TestCase
     }
 
 
+    public void testBehaviorOnNoFallback() throws Exception
+    {
+        final AtomicInteger flag = new AtomicInteger(0);
+        final TimeBox box = new TimeBox(new Object()
+        {
+            @Priority(2)
+            public void okay(Dog dog)
+            {
+                flag.set(2);
+            }
+        });
+
+        box.provide(new Cat());
+
+        // should timeout without matching, no fallback
+        assertFalse(box.react(10, TimeUnit.MILLISECONDS));
+        assertEquals(0, flag.get());
+    }
 }
